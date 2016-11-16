@@ -4,11 +4,9 @@ Ikamantab REST API
 Backend untuk aplikasi Ikatan Alumni Man Tambakberas [ikamantab](https://github.com/winnerawan/ikamantab.git)
 
 ## Instalasi
-
-Clone dan edit '../include/Config.php'
     
     $ git clone git://github.com/winnerawan/ikamantab-backend.git
-    $ cd /ikamantab-backed/api/include
+    $ cd /ikamantab-backend/api/include
     $ nano Config.php //edit configuration
 
 ## Contoh penggunaan
