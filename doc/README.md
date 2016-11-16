@@ -1,10 +1,8 @@
 # Api-document
 
-----------------* Request Tanpa Api Key *--------------------
+##### ----------------* Request Tanpa Api Key *--------------------
 
-### User
-
-# Login
+## Login
 
 ** `POST` `/api/v1/login`**
 
@@ -31,7 +29,7 @@
      }
 ```
 
-# Register
+## Register
 
 ### 2 langkah untuk melakukan registrasi
 
@@ -82,7 +80,7 @@
     }
 ```
 
-# List Jurusan
+## List Jurusan
 
 ** `GET` `/api/v1/listJurusan`**
 
@@ -104,16 +102,12 @@
                   {
                   "jurusan_id": 1
                   "deskripsi": "IPA 1"
-                  },
-                  {
-                  "jurusan_id": 2
-                  "deskripsi: "IPA 2"
                   }
             ]
-       }     
+       }
 ```
 
-# List Asrama
+## List Asrama
 
 ** `GET` `/api/v1/listAsrama`**
 
@@ -128,20 +122,148 @@
           ```
 **_Response_**
 
-```js    
-      {
-            "error": false
-            "asrama": [
-                  {
-                  "asrama_id": 1
-                  "deskripsi": "Asrama 1"
-                  },
-                  {
-                  "asrama_id": 2
-                  "deskripsi: "Asrama 2"
-                  }
-             ]
-       }      
+```js
+    {
+        "error": false
+        "asrama": [
+              {
+              "asrama_id": 1
+              "deskripsi": "Asrama 1"
+              }
+         ]
+    }
+```
+
+##### ----------------* Request Dengan Api Key *--------------------
+
+``` Api Key digunakan untuk membatasi akses, atau untuk mangamankan informasi pengguna dari pengguna yang tidak terdaftar. Api Key disini masih sangat simple, digenerate secara otomomatis ketika pengguna mendaftar. Untuk mengakses informasi user misal nya, Api Key harus disertakan dalam 'HEADER REQUEST' dengan key 'Authorization' 
+```
+
+## Informasi User
+
+
+** `GET` `/api/v1/myInformation`**
+
+**_Parameters_**
+
+* `null` - tanpa parameter
+
+**_Contoh_**
+
+
+```js
+      /api/v1/myInformation
+```
+
+**_Response_**
+
+```js
+{
+  "error": false,
+  "users": [
+    {
+      "id": 2,
+      "name": "Bowo",
+      "email": "bowo@kuda.net",
+s      "gcm": "ceGFjM14PAo:APA91bGzXbg7o8cG9xbuKKZxeUdLHtqQ5CWi9LocfmVWWjxB48q3UHyWzEVxNC5UReGB17qomy0h-sbx4XgZXHMRt9jwENC1NcXeO3Eeiy_kvO2HIJ3i8_AfO41ZLcDbFgk5_zLFjjLM",
+      "foto": "http://localhost/api/v1/default-foto.png",
+      "angkatan": 2001,
+      "jurusan": "IPA 2",
+      "bio": "Presient Kuda",
+      "profesi": "Penunggang Kuda",
+      "keahlian": "Gak punya",
+      "penghargaan": "Gak punya juga",
+      "minat_profesi": "Memerintah",
+      "referensi_rekomendasi": null,
+      "telp": null,
+      "jenis_kelamin": "Laki-laki"
+    }
+  ]
+}
+```
+
+* Response tanpa Api Key
+
+**_Response_**
+
+```js
+    {
+        "error": true
+        "name": "Api key is misssing"
+     }
+```
+
+* Response dengan Api Key yang salah
+
+**_Response_**
+
+```js
+    {
+        "error": true
+        "name": "Access Denied. Invalid Api key"
+     }
+```
+
+# List User
+
+** `GET` `/api/v1/listUsers`**
+
+**_Parameters_**
+
+* `null` - tanpa parameter
+
+**_Contoh_**
+
+
+```js
+      /api/v1/listUsers
+```
+
+**_Response_**
+
+```js
+{
+  "error": false,
+  "users": [
+    {
+      "id": 3,
+      "name": "Dummy",
+      "email": "xxx@xxx.net",
+      "gcm": "fxaaVrpDyJw:APA91bGT60sssgIDRK60G09nOr1z_NeciV6Dj8TgPd-_cjnBLnVodbPj7W667_lD6NAXAoofPjhHMeeobOIInPnss4mRlWVT22gQD2iliITx0fB0RrpRsWrI6BrXE1UdzEXStEJ_yabH",
+      "telp": null,
+      "foto": "http://localhost/api/v1/default-foto.png",
+      "angkatan": 2001,
+      "jurusan": "IPS 2"
+    }
+  ]
+}
+```
+
+* Response tanpa Api Key
+
+**_Response_**
+
+```js
+
+    {
+        "error": true
+        "name": "Api key is misssing"
+     }
+
+```
+
+* Response dengan Api Key yang salah
+
+**_Response_**
+
+```js
+    {
+        "error": true
+        "name": "Access Denied. Invalid Api key"
+     }
 ```
 
 
+-------End Documentation---------
+
+###### .....lain nya menyusul
