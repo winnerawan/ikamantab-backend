@@ -33,7 +33,7 @@
 
 ### 2 langkah untuk melakukan registrasi
 
-#### 1. ** `POST` `/api/v1/register`**
+** `POST` `/api/v1/register`**
 
     **_Parameters_**
 
@@ -56,7 +56,7 @@
      }
 ```
 
-#### 2. ** `POST` `/api/v1/registerInfo`**
+** `POST` `/api/v1/registerInfo`**
 
     **_Parameters_**
 
