@@ -302,6 +302,49 @@ s      "gcm": "ceGFjM14PAo:APA91bGzXbg7o8cG9xbuKKZxeUdLHtqQ5CWi9LocfmVWWjxB48q3U
      }
 ```
 
+# Kirim Pesan di Chat Room
+
+** `POST` `/api/v1/chat_rooms/:id/message`**
+
+**_Path_**
+
+* `:id` - chat room id
+
+**_Parameters_**
+
+* `user_id` - user_id pengirim
+* `message` - pesan
+
+**_Contoh_**
+
+```js
+      /api/v1/chat_rooms/1/message
+      
+            **_Parameters_**
+                  * user_id = 1
+                  * message = Hello World!
+```
+
+**_Response_**
+
+```js
+{
+  "error": false,
+  "message": {
+    "message_id": 3,
+    "chat_room_id": 1,
+    "message": "tiga",
+    "created_at": "2016-11-16 21:14:50"
+  },
+  "user": {
+    "id": 1,
+    "name": "Winnerawan T",
+    "email": "admin@winnerawan.net",
+    "gcm_registration_id": "d5oiJRXuItk:APA91bGui5lLr63IxFddGMh4nWx0oDrSfHGfX36bCx5PFqjD_DbFI_uxIluWcP3Y8Od2grMCSdnQvfAMqgz0lLDobAherhtexOffUsJ8vBanR7muVKhXnUh07UTkbBllNEx4nDQZZunb",
+    "created_at": "2016-10-23 16:12:24"
+  }
+}
+```
 
 -------End Documentation---------
 
