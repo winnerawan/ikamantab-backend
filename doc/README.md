@@ -97,20 +97,20 @@
           ```
 **_Response_**
 
-```js    
-      {        
-      "error": false        
-      "jurusan": [
-          {
-            "jurusan_id": 1
-            "deskripsi": "IPA 1"
-          },
-          {
-          "jurusan_id": 2
-          "deskripsi: "IPA 2"
-          }
-        ]
-      }
+```js
+      {
+            "error": false
+            "jurusan": [
+                  {
+                  "jurusan_id": 1
+                  "deskripsi": "IPA 1"
+                  },
+                  {
+                  "jurusan_id": 2
+                  "deskripsi: "IPA 2"
+                  }
+            ]
+       }     
 ```
 
 # List Asrama
@@ -129,19 +129,19 @@
 **_Response_**
 
 ```js    
-      {        
-      "error": false        
-      "asrama": [
-          {
-            "asrama_id": 1
-            "deskripsi": "Asrama 1"
-          },
-          {
-          "asrama_id": 2
-          "deskripsi: "Asrama 2"
-          }
-        ]
-      }
+      {
+            "error": false
+            "asrama": [
+                  {
+                  "asrama_id": 1
+                  "deskripsi": "Asrama 1"
+                  },
+                  {
+                  "asrama_id": 2
+                  "deskripsi: "Asrama 2"
+                  }
+             ]
+       }      
 ```
 
 
