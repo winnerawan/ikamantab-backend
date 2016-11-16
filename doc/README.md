@@ -136,11 +136,11 @@
 
 ##### ----------------* Request Dengan Api Key *--------------------
 
-``` Api Key digunakan untuk membatasi akses, atau untuk mangamankan informasi pengguna dari pengguna yang tidak terdaftar. Api Key disini masih sangat simple, digenerate secara otomomatis ketika pengguna mendaftar. Untuk mengakses informasi user misal nya, Api Key harus disertakan dalam 'HEADER REQUEST' dengan key 'Authorization' 
+```
+Api Key digunakan untuk membatasi akses, atau untuk mangamankan informasi pengguna dari pengguna yang tidak terdaftar. Api Key disini masih sangat simple, digenerate secara otomomatis ketika pengguna mendaftar. Untuk mengakses informasi user misal nya, Api Key harus disertakan dalam 'HEADER REQUEST' dengan key 'Authorization' 
 ```
 
 ## Informasi User
-
 
 ** `GET` `/api/v1/myInformation`**
 
