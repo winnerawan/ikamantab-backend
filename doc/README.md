@@ -140,6 +140,45 @@
 Api Key digunakan untuk membatasi akses, atau untuk mangamankan informasi pengguna dari pengguna yang tidak terdaftar. Api Key disini masih sangat simple, digenerate secara otomomatis ketika pengguna mendaftar. Untuk mengakses informasi user misal nya, Api Key harus disertakan dalam 'HEADER REQUEST' dengan key 'Authorization' 
 ```
 
+### Contoh dengan Retrofit 1.9 dan OkHttp 2.3.0
+
+* Buat Class khusus agar tidak lagi menulis ulang banyak code (misal) RequestWithKey
+
+**Class RequestWithKey**
+
+```java
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+
+public class RequestWithKey {
+    public RestAdapter RequestWithToken(final String api_key) {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        request.addHeader("Authorization", api_key);
+                        Log.e(TAG, request.toString());
+                    }
+                })
+                .setEndpoint(AppConfig.BASE_URL)
+                .build();
+
+        return restAdapter;
+    }
+```
+
+* Contoh Method Impl
+
+```java
+private void requestListUser(final String api_key) {
+    RequestWithKey req = new RequestWithKey();
+    ApiInterface api = req.RequestWithToken(api_key).create(ApiInterface.class);
+    api.getlisuser...
+    ...
+    //TO DO
+    //Your Business here
+```
+
 ## Informasi User
 
 ** `GET` `/api/v1/myInformation`**
