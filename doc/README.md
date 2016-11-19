@@ -5,6 +5,7 @@
 #####_________________* Request Tanpa Api Key *____________________
 
 * [Login](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#login)
+* [Register](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#register)
 * [List Jurusan](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#list-jurusan)
 * [List Asrama](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#list-asrama)
 
@@ -14,6 +15,8 @@
 * [List All User](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#list-user)
 * [Kirim Pesan di Chat Room](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#kirim-pesan-di-chat-room)
 * [List Teman](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#list-teman)
+* [Tambah Teman](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#tambah-teman)
+* [Terima Teman](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#terima-teman)
 
 
 
@@ -377,6 +380,36 @@ s      "gcm": "ceGFjM14PAo:APA91bGzXbg7o8cG9xbuKKZxeUdLHtqQ5CWi9LocfmVWWjxB48q3U
 **_Headers_**
 
 * `Authorization` - api_key
+
+
+# Tambah Teman
+
+** `POST` `/api/v1/add/user/:user_id/friend/:friend_id`**
+
+**_Parameters_**
+
+* `null` - tanpa parameter
+
+**_Headers_**
+
+* `Authorization` - api_key
+
+
+
+# Terima Teman
+
+** `POST` `/api/v1/accept/user/:user_id/friend/:friend_id`**
+
+**_Parameters_**
+
+* `null` - tanpa parameter
+
+**_Headers_**
+
+* `Authorization` - api_key
+
+
+
 
 
 -------End Documentation---------
