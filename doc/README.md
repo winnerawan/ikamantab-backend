@@ -1,5 +1,26 @@
 # Api-document
 
+# Daftar Isi
+
+#####_________________* Request Tanpa Api Key *____________________
+
+* [Login](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#login)
+* [Register](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#register)
+* [List Jurusan](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#list-jurusan)
+* [List Asrama](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#list-asrama)
+
+#####_________________* Request Dengan Api Key *____________________
+
+* [Informasi User](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#informasi-user)
+* [List All User](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#list-user)
+* [Kirim Pesan di Chat Room](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#kirim-pesan-di-chat-room)
+* [List Teman](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#list-teman)
+* [Tambah Teman](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#tambah-teman)
+* [Terima Teman](https://github.com/winnerawan/ikamantab-backend/tree/master/doc/#terima-teman)
+
+
+
+
 ##### ----------------* Request Tanpa Api Key *--------------------
 
 ## Login
@@ -301,6 +322,94 @@ s      "gcm": "ceGFjM14PAo:APA91bGzXbg7o8cG9xbuKKZxeUdLHtqQ5CWi9LocfmVWWjxB48q3U
         "name": "Access Denied. Invalid Api key"
      }
 ```
+
+# Kirim Pesan di Chat Room
+
+** `POST` `/api/v1/chat_rooms/:id/message`**
+
+**_Path_**
+
+* `:id` - chat room id
+
+**_Parameters_**
+
+* `user_id` - user_id pengirim
+* `message` - pesan
+
+**_Contoh_**
+
+```js
+      /api/v1/chat_rooms/1/message
+      
+            **_Parameters_**
+                  * user_id = 1
+                  * message = Hello World!
+```
+
+**_Response_**
+
+```js
+{
+  "error": false,
+  "message": {
+    "message_id": 3,
+    "chat_room_id": 1,
+    "message": "tiga",
+    "created_at": "2016-11-16 21:14:50"
+  },
+  "user": {
+    "id": 1,
+    "name": "Winnerawan T",
+    "email": "admin@winnerawan.net",
+    "gcm_registration_id": "d5oiJRXuItk:APA91bGui5lLr63IxFddGMh4nWx0oDrSfHGfX36bCx5PFqjD_DbFI_uxIluWcP3Y8Od2grMCSdnQvfAMqgz0lLDobAherhtexOffUsJ8vBanR7muVKhXnUh07UTkbBllNEx4nDQZZunb",
+    "created_at": "2016-10-23 16:12:24"
+  }
+}
+```
+
+# Relasi Pertemanan 
+
+## List Teman 
+
+** `GET` `/api/v1/listAllFriends`**
+
+**_Parameters_**
+
+* `null` - tanpa parameter
+
+**_Headers_**
+
+* `Authorization` - api_key
+
+
+# Tambah Teman
+
+** `POST` `/api/v1/add/user/:user_id/friend/:friend_id`**
+
+**_Parameters_**
+
+* `null` - tanpa parameter
+
+**_Headers_**
+
+* `Authorization` - api_key
+
+
+
+# Terima Teman
+
+** `POST` `/api/v1/accept/user/:user_id/friend/:friend_id`**
+
+**_Parameters_**
+
+* `null` - tanpa parameter
+
+**_Headers_**
+
+* `Authorization` - api_key
+
+
+
 
 
 -------End Documentation---------
