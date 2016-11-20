@@ -294,6 +294,49 @@ class DbHandler {
         return $tasks;
     }
 
+
+    /**
+     * Fetching all pending friend request
+     * @param String $user_id id of the user
+     */
+    public function getPendingFriendRequest($user_id) {
+        $stmt = $this->conn->prepare("SELECT f1.friend_id AS friend_id FROM friendship AS f1 LEFT JOIN friendship AS f2 ON f1.friend_id = f2.friend_id AND f1.user_id = f2.friend_id WHERE f1.accepted = 0 AND f1.user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $tasks = $stmt->get_result();
+        $stmt->close();
+        return $tasks;
+    }
+
+
+    /**
+     * Fetching all pending friend request
+     * @param String $user_id id of the user
+     */
+    public function getFriendRequest($user_id) {
+        $stmt = $this->conn->prepare("SELECT users.id, users.name, users.email, users.gcm_registration_id as gcm, users.created_at, user_detail.telp, user_detail.jenis_kelamin , user_detail.angkatan_lulus as angkatan, user_detail.foto, jurusan.deskripsi as jurusan, asrama.deskripsi as asrama FROM friendship f INNER JOIN users ON users.id=f.user_id INNER JOIN user_detail ON user_detail.user_id=users.id INNER JOIN asrama ON user_detail.asrama_id = asrama.asrama_id INNER JOIN jurusan ON user_detail.jurusan_id = jurusan.jurusan_id WHERE f.friend_id= ? AND f.accepted = 0 ");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $tasks = $stmt->get_result();
+        $stmt->close();
+        return $tasks;
+    }
+
+
+    /**
+     * Fetching all pending friend request
+     * @param String $user_id id of the user
+     */
+    public function suggestionFriend($user_id) {
+        $stmt = $this->conn->prepare("SELECT F2.friend_id, users.name, users.email, users.gcm_registration_id as gcm, users.created_at, user_detail.angkatan_lulus as angkatan, jurusan.deskripsi as jurusan, user_detail.asrama_id as asrama , user_detail.jenis_kelamin, user_detail.foto, user_detail.telp FROM friendship F JOIN friendship F2 ON F.friend_id = F2.user_id JOIN users ON users.id = F2.friend_id JOIN user_detail ON user_detail.user_id = F2.friend_id INNER JOIN jurusan ON jurusan.jurusan_id = user_detail.jurusan_id INNER JOIN asrama ON asrama.asrama_id = user_detail.asrama_id WHERE F2.friend_id NOT IN (SELECT friend_id FROM friendship WHERE user_id=?) AND F.user_id = ? AND f2.friend_id != ? ");
+        $stmt->bind_param("iii", $user_id, $user_id, $user_id);
+        $stmt->execute();
+        $tasks = $stmt->get_result();
+        $stmt->close();
+        return $tasks;
+    }
+
+
     /**
      * Updating task
      * @param String $task_id id of the task
@@ -341,9 +384,77 @@ class DbHandler {
         return $result;
     }
 
+    /**
+     * Function to add friend
+     * @param String $user_id id of the user
+     * @param String $friend id of the friend
+     */
+    public function addFriend($user_id, $friend_id) {
+        $stmt = $this->conn->prepare("INSERT INTO friendship (user_id, friend_id) values(?, ?)");
+        $stmt->bind_param("ii", $user_id, $friend_id);
+        $result = $stmt->execute();
+
+        if (false === $result) {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
+        }
+        $stmt->close();
+        return $result;
+    }
+
+
+/**
+     * Function to add friend
+     * @param String $user_id id of the user
+     * @param String $friend id of the friend
+     */
+    public function updateAccept($user_id, $friend_id) {
+        $stmt = $this->conn->prepare("UPDATE friendship SET accepted = 1 WHERE user_id = ? AND friend_id = ? ");
+        $stmt->bind_param("ii", $user_id, $friend_id);
+        $result = $stmt->execute();
+
+        if (false === $result) {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
+        }
+        $stmt->close();
+        return $result;
+    }
+
+    /**
+     * Function to add friend
+     * @param String $user_id id of the user
+     * @param String $friend id of the friend
+     */
+    public function acceptFriend($user_id, $friend_id) {
+        $stmt = $this->conn->prepare("INSERT INTO friendship (user_id, friend_id, accepted) values(?, ?, 1)");
+        $stmt->bind_param("ii", $user_id, $friend_id);
+        $result = $stmt->execute();
+
+        if (false === $result) {
+            die('execute() failed: ' . htmlspecialchars($stmt->error));
+        }
+        $stmt->close();
+        return $result;
+    }
+
+
+/**
+     * Updating bio
+     * @param String $task_id id of the task
+     * @param String $task task text
+     * @param String $status task status
+     */
+    public function updateBio($user_id, $bio) {
+        $stmt = $this->conn->prepare("UPDATE user_detail set bio = ? WHERE user_id= ?");
+        $stmt->bind_param("si", $bio, $user_id);
+        $stmt->execute();
+        $num_affected_rows = $stmt->affected_rows;
+        $stmt->close();
+        return $num_affected_rows > 0;
+    }
+
 
 	/**
-     * Updating task
+     * Updating profesi
      * @param String $task_id id of the task
      * @param String $task task text
      * @param String $status task status
@@ -357,19 +468,128 @@ class DbHandler {
         return $num_affected_rows > 0;
     }
 
+    /**
+     * Updating pelatihan / keahlian
+     * @param String $task_id id of the task
+     * @param String $task task text
+     * @param String $status task status
+     */
+    public function updateKeahlian($user_id, $keahlian) {
+        $stmt = $this->conn->prepare("UPDATE user_detail set keahlian = ? WHERE user_id= ?");
+        $stmt->bind_param("si", $keahlian, $user_id);
+        $stmt->execute();
+        $num_affected_rows = $stmt->affected_rows;
+        $stmt->close();
+        return $num_affected_rows > 0;
+    }
+
+        /**
+     * Updating penghargaan
+     * @param String $task_id id of the task
+     * @param String $task task text
+     * @param String $status task status
+     */
+    public function updatePenghargaan($user_id, $penghargaan) {
+        $stmt = $this->conn->prepare("UPDATE user_detail set penghargaan = ? WHERE user_id= ?");
+        $stmt->bind_param("si", $penghargaan, $user_id);
+        $stmt->execute();
+        $num_affected_rows = $stmt->affected_rows;
+        $stmt->close();
+        return $num_affected_rows > 0;
+    }
+
+        /**
+     * Updating minat_profesi
+     * @param String $task_id id of the task
+     * @param String $task task text
+     * @param String $status task status
+     */
+    public function updateMinat($user_id, $minat_profesi) {
+        $stmt = $this->conn->prepare("UPDATE user_detail set minat_profesi = ? WHERE user_id= ?");
+        $stmt->bind_param("si", $minat_profesi, $user_id);
+        $stmt->execute();
+        $num_affected_rows = $stmt->affected_rows;
+        $stmt->close();
+        return $num_affected_rows > 0;
+    }
+
+
+        /**
+     * Updating minat_profesi
+     * @param String $task_id id of the task
+     * @param String $task task text
+     * @param String $status task status
+     */
+    public function updateReferensi($user_id, $referensi_rekomendasi) {
+        $stmt = $this->conn->prepare("UPDATE user_detail set referensi_rekomendasi = ? WHERE user_id= ?");
+        $stmt->bind_param("si", $referensi_rekomendasi, $user_id);
+        $stmt->execute();
+        $num_affected_rows = $stmt->affected_rows;
+        $stmt->close();
+        return $num_affected_rows > 0;
+    }
+    
+
+            /**
+     * Updating minat_profesi
+     * @param String $task_id id of the task
+     * @param String $task task text
+     * @param String $status task status
+     */
+    public function updateTelp($user_id, $telp) {
+        $stmt = $this->conn->prepare("UPDATE user_detail set telp = ? WHERE user_id= ?");
+        $stmt->bind_param("si", $telp, $user_id);
+        $stmt->execute();
+        $num_affected_rows = $stmt->affected_rows;
+        $stmt->close();
+        return $num_affected_rows > 0;
+    }
+
+
+            /**
+     * Updating minat_profesi
+     * @param String $task_id id of the task
+     * @param String $task task text
+     * @param String $status task status
+     */
+    public function updateEmail($id, $email) {
+        $stmt = $this->conn->prepare("UPDATE users set email = ? WHERE id= ?");
+        $stmt->bind_param("si", $email, $id);
+        $stmt->execute();
+        $num_affected_rows = $stmt->affected_rows;
+        $stmt->close();
+        return $num_affected_rows > 0;
+    }
 
     /**
      * Fetching list user != user
      * @param String $user_id id of the user
      */
     public function getListAllUser($user_id) {
-        $stmt = $this->conn->prepare("SELECT users.id,users.name,users.email, users.gcm_registration_id as gcm, user_detail.foto, user_detail.telp, user_detail.angkatan_lulus as angkatan,jurusan.deskripsi as jurusan FROM users INNER JOIN user_detail on users.id=user_detail.user_id INNER JOIN jurusan on user_detail.jurusan_id=jurusan.jurusan_id and user_detail.user_id != ?");
+        $stmt = $this->conn->prepare("SELECT users.id,users.name,users.email, users.gcm_registration_id as gcm, user_detail.bio, user_detail.profesi, user_detail.keahlian, user_detail.penghargaan, user_detail.minat_profesi, user_detail.referensi_rekomendasi, user_detail.foto, user_detail.telp, user_detail.angkatan_lulus as angkatan,jurusan.deskripsi as jurusan, user_detail.jenis_kelamin, asrama.deskripsi as asrama FROM users INNER JOIN user_detail on users.id=user_detail.user_id INNER JOIN jurusan on user_detail.jurusan_id=jurusan.jurusan_id INNER JOIN asrama ON asrama.asrama_id = user_detail.asrama_id and user_detail.user_id != ? ");
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
         $tasks = $stmt->get_result();
         $stmt->close();
         return $tasks;
     }
+
+
+    /**
+     * Fetching list friends of user
+     * @param null
+     * Authorization
+     */
+
+    public function getListAllFriends($user_id) {
+        $stmt = $this->conn->prepare("SELECT u.id, u.name, u.email, u.gcm_registration_id as gcm, u.created_at, ud.angkatan_lulus as angkatan, ud.jenis_kelamin, asrama.deskripsi as asrama, jurusan.deskripsi as jurusan, ud.bio, ud.profesi, ud.keahlian, ud.penghargaan, ud.minat_profesi, ud.referensi_rekomendasi, ud.foto, ud.telp FROM friendship fs INNER JOIN users u ON (u.id = fs.friend_id) INNER JOIN user_detail ud ON ud.user_id=u.id INNER JOIN asrama ON asrama.asrama_id=ud.asrama_id INNER JOIN jurusan ON jurusan.jurusan_id=ud.jurusan_id WHERE fs.accepted = 1 AND fs.user_id = ? ORDER BY u.name");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $tasks = $stmt->get_result();
+        $stmt->close();
+        return $tasks;
+    }
+
 
     /**
      * Fetching list jurusan
@@ -401,7 +621,7 @@ class DbHandler {
     /**
      * Fetching user info
      * @param String $user_id id of the user
-     */
+     
     public function getMyInfo($user_id) {
         $stmt = $this->conn->prepare("SELECT users.id,users.name,users.email,users.gcm_registration_id as gcm, user_detail.foto,user_detail.bio,user_detail.profesi,user_detail.keahlian,user_detail.penghargaan,user_detail.minat_profesi,user_detail.referensi_rekomendasi,user_detail.telp,user_detail.jenis_kelamin,user_detail.angkatan_lulus as angkatan,jurusan.deskripsi as jurusan FROM users INNER JOIN user_detail on users.id=user_detail.user_id INNER JOIN jurusan on user_detail.jurusan_id=jurusan.jurusan_id and user_detail.user_id = ?");
         $stmt->bind_param("i", $user_id);
@@ -410,17 +630,52 @@ class DbHandler {
         $stmt->close();
         return $tasks;
     }
+*/
+     /**
+     * Fetching single task
+     * @param String $task_id id of the task
+     */
+    public function getMyInfo($user_id) {
+        $stmt = $this->conn->prepare("SELECT users.id,users.name,users.email,users.gcm_registration_id as gcm, user_detail.foto,user_detail.bio,user_detail.profesi,user_detail.keahlian,user_detail.penghargaan,user_detail.minat_profesi,user_detail.referensi_rekomendasi,user_detail.telp,user_detail.jenis_kelamin,user_detail.angkatan_lulus as angkatan,jurusan.deskripsi as jurusan FROM users INNER JOIN user_detail on users.id=user_detail.user_id INNER JOIN jurusan on user_detail.jurusan_id=jurusan.jurusan_id and user_detail.user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        if ($stmt->execute()) {
+            $res = array();
+            $stmt->bind_result($id, $name, $email, $gcm, $foto, $bio, $profesi, $keahlian, $penghargaan, $minat_profesi, $referensi_rekomendasi, $telp, $jenis_kelamin, $angkatan, $jurusan);
+            // TODO
+            // $task = $stmt->get_result()->fetch_assoc();
+            $stmt->fetch();
+            $res["id"] = $id;
+            $res["name"] = $name;
+            $res["email"] = $email;
+            $res["gcm"] = $gcm;
+            $res["foto"] = $foto;
+            $res["bio"] = $bio;
+            $res["profesi"] = $profesi;
+            $res["keahlian"] = $keahlian;
+            $res["penghargaan"] = $penghargaan;
+            $res["minat_profesi"] = $minat_profesi;
+            $res["referensi_rekomendasi"] = $referensi_rekomendasi;
+            $res["telp"] = $telp;
+            $res["jenis_kelamin"] = $jenis_kelamin;
+            $res["angkatan"] = $angkatan;
+            $res["jurusan"] = $jurusan;
+            $stmt->close();
+            return $res;
+        } else {
+            return NULL;
+        }
+    }
 
      /**
      * Fetching single task
      * @param String $task_id id of the task
      */
     public function getShareInfo($user_id) {
-        $stmt = $this->conn->prepare("SELECT users.id,users.name, users.email, user_detail.foto,user_detail.jenis_kelamin,user_detail.angkatan_lulus as angkatan,jurusan.deskripsi as jurusan, asrama.deskripsi as asrama FROM users INNER JOIN user_detail on users.id=user_detail.user_id INNER JOIN jurusan on user_detail.jurusan_id=jurusan.jurusan_id INNER JOIN asrama on user_detail.asrama_id=asrama.asrama_id and user_detail.user_id = ?");
+        $stmt = $this->conn->prepare("SELECT users.id,users.name, users.email, user_detail.foto,user_detail.jenis_kelamin, user_detail.telp, user_detail.angkatan_lulus as angkatan,jurusan.deskripsi as jurusan, asrama.deskripsi as asrama FROM users INNER JOIN user_detail on users.id=user_detail.user_id INNER JOIN jurusan on user_detail.jurusan_id=jurusan.jurusan_id INNER JOIN asrama on user_detail.asrama_id=asrama.asrama_id and user_detail.user_id = ?");
         $stmt->bind_param("i", $user_id);
         if ($stmt->execute()) {
             $res = array();
-            $stmt->bind_result($id, $name, $email, $foto, $jenis_kelamin, $angkatan, $jurusan, $asrama);
+            $stmt->bind_result($id, $name, $email, $foto, $jenis_kelamin, $telp, $angkatan, $jurusan, $asrama);
             // TODO
             // $task = $stmt->get_result()->fetch_assoc();
             $stmt->fetch();
@@ -429,6 +684,7 @@ class DbHandler {
             $res["email"] = $email;
             $res["foto"] = $foto;
             $res["jenis_kelamin"] = $jenis_kelamin;
+            $res["telp"] = $telp;
             $res["angkatan"] = $angkatan;
             $res["jurusan"] = $jurusan;
             $res["asrama"] = $asrama;
@@ -460,6 +716,50 @@ class DbHandler {
             return NULL;
         }
     }
+
+    /**
+     * Fetching single task
+     * @param String $task_id id of the task
+     */
+    public function hasFriends($user_id, $friend_id) {
+        $stmt = $this->conn->prepare("SELECT user_id FROM friendship WHERE user_id = ? AND friend_id = ? AND accepted = 1");
+        $stmt->bind_param("ii", $user_id, $friend_id);
+        if ($stmt->execute()) {
+            $res = array();
+            $stmt->bind_result($user_id);
+            // TODO
+            // $task = $stmt->get_result()->fetch_assoc();
+            $stmt->fetch();
+            $res["user_id"] = $user_id;
+            $stmt->close();
+            return $res;
+        } else {
+            return NULL;
+        }
+    }
+
+
+    /**
+     * Fetching single task
+     * @param String $task_id id of the task
+     */
+    public function hasAdded($user_id, $friend_id) {
+        $stmt = $this->conn->prepare("SELECT user_id FROM friendship WHERE user_id = ? AND friend_id = ? AND accepted = 0");
+        $stmt->bind_param("ii", $user_id, $friend_id);
+        if ($stmt->execute()) {
+            $res = array();
+            $stmt->bind_result($user_id);
+            // TODO
+            // $task = $stmt->get_result()->fetch_assoc();
+            $stmt->fetch();
+            $res["user_id"] = $user_id;
+            $stmt->close();
+            return $res;
+        } else {
+            return NULL;
+        }
+    }
+
 
      /**
      * 

@@ -214,8 +214,59 @@ $app->get('/listUsers', 'authenticate', function() {
                 $tmp["foto"] = $task["foto"];
                 $tmp["angkatan"] = $task["angkatan"];
                 $tmp["jurusan"] = $task["jurusan"];
-
+                $tmp["bio"] = $task["bio"];
+                $tmp["profesi"] = $task["profesi"];
+                $tmp["minat_profesi"] = $task["minat_profesi"];
+                $tmp["referensi_rekomendasi"] = $task["referensi_rekomendasi"];
+                $tmp["keahlian"] = $task["keahlian"];
+                $tmp["penghargaan"] = $task["penghargaan"];
+                $tmp["asrama"] = $task["asrama"];
+                $tmp["jenis_kelamin"] = $task["jenis_kelamin"];
                 array_push($response["users"], $tmp);
+            }
+
+            echoRespnse(200, $response);
+        });
+
+
+/**
+ * Listing all tasks of particual user
+ * method GET
+ * url /tasks          
+ */
+
+$app->get('/listAllFriends', 'authenticate', function() {
+            global $user_id;
+            $response = array();
+            $db = new DbHandler();
+
+            // fetching all user tasks
+            $result = $db->getListAllFriends($user_id);
+
+            $response["error"] = false;
+            $response["friends"] = array();
+
+            // looping through result and preparing tasks array
+            while ($task = $result->fetch_assoc()) {
+                $tmp = array();
+                $tmp["id"] = $task["id"];
+                $tmp["name"] = $task["name"];
+                $tmp["email"] = $task["email"];
+                $tmp["gcm"] = $task["gcm"];
+                $tmp["created_at"] = $task["created_at"];
+                $tmp["angkatan"] = $task["angkatan"];
+                $tmp["jenis_kelamin"] = $task["jenis_kelamin"];
+                $tmp["jurusan"] = $task["jurusan"];
+                $tmp["asrama"] = $task["asrama"];
+                $tmp["bio"] = $task["bio"];
+                $tmp["profesi"] = $task["profesi"];
+                $tmp["keahlian"] = $task["keahlian"];
+                $tmp["penghargaan"] = $task["penghargaan"];
+                $tmp["minat_profesi"] = $task["minat_profesi"];
+                $tmp["referensi_rekomendasi"] = $task["referensi_rekomendasi"];
+                $tmp["foto"] = $task["foto"];
+                $tmp["telp"] = $task["telp"];
+                array_push($response["friends"], $tmp);
             }
 
             echoRespnse(200, $response);
@@ -241,11 +292,50 @@ $app->put('/updategcmUser/:id', function($user_id) use ($app) {
     echoRespnse(200, $response);
 });
 
+
+/**
+ * Listing single task of particual user
+ * method GET
+ * url /tasks/:id
+ * Will return 404 if the task doesn't belongs to user
+ */
+$app->get('/myInformation', 'authenticate', function() {
+            global $user_id;
+            $response = array();
+            $db = new DbHandler();
+
+            // fetch task
+            $result = $db->getMyInfo($user_id);
+
+            if ($result != NULL) {
+                $response["id"] = $result['id'];
+                $response["name"] = $result['name'];
+                $response["email"] = $result['email'];
+                $response["gcm"] = $result['gcm'];
+                $response["foto"] = $result['foto'];
+                $response["bio"] = $result['bio'];
+                $response["profesi"] = $result['profesi'];
+                $response["keahlian"] = $result['keahlian'];
+                $response["penghargaan"] = $result['penghargaan'];
+                $response["minat_profesi"] = $result['minat_profesi'];
+                $response["referensi_rekomendasi"] = $result['referensi_rekomendasi'];
+                $response["telp"] = $result['telp'];
+                $response["jenis_kelamin"] = $result['jenis_kelamin'];
+                $response["angkatan"] = $result['angkatan'];
+                $response["jurusan"] = $result['jurusan'];
+                echoRespnse(200, $response);
+            } else {
+                $response["error"] = true;
+                $response["message"] = "The requested resource doesn't exists";
+                echoRespnse(404, $response);
+            }
+        });       
+
 /**
  * Listing all info 
  * method GET
  * url /myInformation          
- */
+ 
 $app->get('/myInformation', 'authenticate', function() {
             global $user_id;
             $response = array();
@@ -255,7 +345,7 @@ $app->get('/myInformation', 'authenticate', function() {
             $result = $db->getMyInfo($user_id);
 
             $response["error"] = false;
-            $response["users"] = array();
+            //$response["users"] = array();
 
             // looping through result and preparing tasks array
             while ($task = $result->fetch_assoc()) {
@@ -281,7 +371,9 @@ $app->get('/myInformation', 'authenticate', function() {
 
             echoRespnse(200, $response);
         });
+*/
 
+ 
 
 
 /**
@@ -383,7 +475,7 @@ $app->post('/chat_rooms/:id/message', function($chat_room_id) {
         $data['message'] = $response['message'];
         $data['chat_room_id'] = $chat_room_id;
  
-        $push->setTitle("Ikamantab Forum");
+        $push->setTitle("IKAMANTAB");
         $push->setIsBackground(FALSE);
         $push->setFlag(PUSH_FLAG_CHATROOM);
         $push->setData($data);
@@ -431,7 +523,7 @@ $app->post('/users/:id/message', function($to_user_id) {
  
         $push->setTitle("Google Cloud Messaging");
         $push->setIsBackground(FALSE);
-        $push->setFlag(PUSH_FLAG_USER);
+        $push->setFlag(PUSH_FLAG_CHATROOM);
         $push->setData($data);
  
         // sending push message to single user
@@ -444,6 +536,7 @@ $app->post('/users/:id/message', function($to_user_id) {
     echoRespnse(200, $response);
 });
  
+
  
 /**
  * Sending push notification to multiple users
@@ -493,7 +586,7 @@ $app->post('/users/message', function() use ($app) {
  
     $push->setTitle("Google Cloud Messaging");
     $push->setIsBackground(FALSE);
-    $push->setFlag(PUSH_FLAG_USER);
+    $push->setFlag(PUSH_FLAG_CHATROOM);
     $push->setData($data);
  
     // sending push message to multiple users
@@ -611,9 +704,11 @@ $app->get('/myInfo', 'authenticate', function() {
 
             // fetch task
             $result = $db->getMyInfo($user_id);
-
-            if ($result != NULL) {
+            if ($result) {
                 $response["error"] = false;
+            }
+            if ($result != NULL) {
+                
                 $response["id"] = $result["id"];
                 $response["name"] = $result["name"];
                 $response["foto"] = $result["foto"];
@@ -669,6 +764,108 @@ $app->get('/tasks', 'authenticate', function() {
             echoRespnse(200, $response);
         });
 
+
+
+/**
+ * Listing all pending friend req
+ * method GET
+ * url /          
+ */
+$app->get('/pendingRequest', 'authenticate', function() {
+            global $user_id;
+            $response = array();
+            $db = new DbHandler();
+
+            $result = $db->getPendingFriendRequest($user_id);
+
+            $response["error"] = false;
+            $response["friends"] = array();
+
+            // looping through result and preparing tasks array
+            while ($task = $result->fetch_assoc()) {
+                $tmp = array();
+                $tmp["friend_id"] = $task["friend_id"];
+            
+                array_push($response["friends"], $tmp);
+            }
+
+            echoRespnse(200, $response);
+        });
+
+
+/**
+ * Listing all pending friend req
+ * method GET
+ * url /          
+ */
+$app->get('/friendRequest', 'authenticate', function() {
+            global $user_id;
+            $response = array();
+            $db = new DbHandler();
+
+            $result = $db->getFriendRequest($user_id);
+
+            $response["error"] = false;
+            $response["friends"] = array();
+
+            // looping through result and preparing tasks array
+            while ($task = $result->fetch_assoc()) {
+                $tmp = array();
+                $tmp["id"] = $task["id"];
+                $tmp["name"] = $task["name"];
+                $tmp["email"] = $task["email"];
+                $tmp["gcm"] = $task["gcm"];
+                $tmp["created_at"] = $task["created_at"];
+                $tmp["angkatan"] = $task["angkatan"];
+                $tmp["jenis_kelamin"] = $task["jenis_kelamin"];
+                $tmp["jurusan"] = $task["jurusan"];
+                $tmp["asrama"] = $task["asrama"];
+                $tmp["foto"] = $task["foto"];
+                $tmp["telp"] = $task["telp"];
+
+                array_push($response["friends"], $tmp);
+            }
+
+            echoRespnse(200, $response);
+        });
+
+
+/**
+ * Listing all pending friend req
+ * method GET
+ * url /          
+ */
+$app->get('/friendSuggestion', 'authenticate', function() {
+            global $user_id;
+            $response = array();
+            $db = new DbHandler();
+
+            $result = $db->suggestionFriend($user_id);
+
+            $response["error"] = false;
+            $response["friends"] = array();
+
+            // looping through result and preparing tasks array
+            while ($task = $result->fetch_assoc()) {
+                $tmp = array();
+                $tmp["friend_id"] = $task["friend_id"];
+                $tmp["name"] = $task["name"];
+                $tmp["email"] = $task["email"];
+                $tmp["gcm"] = $task["gcm"];
+                $tmp["created_at"] = $task["created_at"];
+                $tmp["angkatan"] = $task["angkatan"];
+                $tmp["jenis_kelamin"] = $task["jenis_kelamin"];
+                $tmp["jurusan"] = $task["jurusan"];
+                $tmp["asrama"] = $task["asrama"];
+                $tmp["foto"] = $task["foto"];
+                $tmp["telp"] = $task["telp"];
+
+                array_push($response["friends"], $tmp);
+            }
+
+            echoRespnse(200, $response);
+        });
+
 /**
  * Listing single task of particual user
  * method GET
@@ -718,6 +915,7 @@ $app->get('/user/:id', 'authenticate', function($user_id) {
                 $response["email"] = $result["email"];
                 $response["foto"] = $result["foto"];
                 $response["jenis_kelamin"] = $result["jenis_kelamin"];
+                $response["telp"] = $result["telp"];
                 $response["angkatan"] = $result["angkatan"];
                 $response["jurusan"] = $result["jurusan"];
                 $response["asrama"] = $result["asrama"];
@@ -758,6 +956,67 @@ $app->get('/userid/:email', function($email) {
         });
 
 /**
+ * Listing single task of particual user
+ * method GET
+ * url /tasks/:id
+ * Will return 404 if the task doesn't belongs to user
+ */
+$app->get('/user/:user_id/friend/:friend_id', function($user_id, $friend_id) {
+            //global $user_id;
+            $response = array();
+            $db = new DbHandler();
+
+            // fetch task
+            $result = $db->hasFriends($user_id, $friend_id);
+
+            if ($result != NULL) {
+                $response["error"] = false;
+                $response["user_id"] = $result["user_id"];
+                if ($response['user_id'] != NULL) {
+                    $response["is_friend"] = true;
+                } else {
+                    $response["is_friend"] = false;
+                }
+                echoRespnse(200, $response);
+            } else {
+                $response["error"] = true;
+                $response["message"] = "The requested resource doesn't exists";
+                echoRespnse(404, $response);
+            }
+        });
+
+
+/**
+ * Listing single task of particual user
+ * method GET
+ * url /tasks/:id
+ * Will return 404 if the task doesn't belongs to user
+ */
+$app->get('/hasadded/:user_id/friend/:friend_id', function($user_id, $friend_id) {
+            //global $user_id;
+            $response = array();
+            $db = new DbHandler();
+
+            // fetch task
+            $result = $db->hasAdded($user_id, $friend_id);
+
+            if ($result != NULL) {
+                $response["error"] = false;
+                $response["user_id"] = $result["user_id"];
+                if ($response['user_id'] != NULL) {
+                    $response["is_added"] = true;
+                } else {
+                    $response["is_added"] = false;
+                }
+                echoRespnse(200, $response);
+            } else {
+                $response["error"] = true;
+                $response["message"] = "The requested resource doesn't exists";
+                echoRespnse(404, $response);
+            }
+        });
+
+/**
  * Creating new task in db
  * method POST
  * params - name
@@ -789,6 +1048,91 @@ $app->post('/tasks', 'authenticate', function() use ($app) {
         });
 
 
+/**
+ * Creating new relationship friend in db
+ * method POST
+ * params - name
+ * url - /tasks/
+ */
+$app->post('/add/:user_id/friend/:friend_id', 'authenticate', function($user_id, $friend_id) use ($app) {
+            // check for required params
+            $response = array();
+
+            global $user_id;
+            $db = new DbHandler();
+            // creating new task
+            $task_id = $db->addFriend($user_id, $friend_id);
+
+            if ($task_id != NULL) {
+                $response["error"] = false;
+                $response["message"] = "Friend added successfully";
+                echoRespnse(201, $response);
+            } else {
+                $response["error"] = true;
+                $response["message"] = "Failed to add friend. Please try again";
+                echoRespnse(200, $response);
+            }            
+        });
+
+
+/**
+ * Creating new relationship friend in db
+ * method POST
+ * params - name
+ * url - /tasks/
+ */
+$app->post('/accept/:user_id/friend/:friend_id', 'authenticate', function($user_id, $friend_id) use ($app) {
+            // check for required params
+            $response = array();
+
+            global $user_id;
+            $db = new DbHandler();
+            // creating new task
+            $task_id = $db->acceptFriend($user_id, $friend_id);
+            $task_id = $db->updateAccept($friend_id, $user_id);
+            if ($task_id != NULL) {
+                $response["error"] = false;
+                $response["message"] = "Friend accept successfully";
+                echoRespnse(201, $response);
+            } else {
+                $response["error"] = true;
+                $response["message"] = "Failed to accept friend. Please try again";
+                echoRespnse(200, $response);
+            }            
+        });
+
+
+
+/**
+ * Updating existing task
+ * method PUT
+ * params task, status
+ * url - /tasks/:id
+ */
+$app->put('/updateBio', 'authenticate', function() use($app) {
+            // check for required params
+            //verifyRequiredParams(array('profesi'));
+
+            global $user_id;            
+            $bio = $app->request->put('bio');
+            //$status = $app->request->put('status');
+
+            $db = new DbHandler();
+            $response = array();
+
+            // updating task
+            $result = $db->updateBio($user_id, $bio);
+            if ($result) {
+                // task updated successfully
+                $response["error"] = false;
+                $response["message"] = "Bio updated successfully";
+            } else {
+                // task failed to update
+                $response["error"] = true;
+                $response["message"] = "Bio failed to update. Please try again!";
+            }
+            echoRespnse(200, $response);
+        });
 
 /**
  * Updating existing task
@@ -812,15 +1156,206 @@ $app->put('/updateProfesi', 'authenticate', function() use($app) {
             if ($result) {
                 // task updated successfully
                 $response["error"] = false;
-                $response["message"] = "Task updated successfully";
+                $response["message"] = "Profesi updated successfully";
             } else {
                 // task failed to update
                 $response["error"] = true;
-                $response["message"] = "Task failed to update. Please try again!";
+                $response["message"] = "Profesi failed to update. Please try again!";
             }
             echoRespnse(200, $response);
         });
 
+
+/**
+ * Updating existing task
+ * method PUT
+ * params task, status
+ * url - /tasks/:id
+ */
+$app->put('/updateKeahlian', 'authenticate', function() use($app) {
+            // check for required params
+            //verifyRequiredParams(array('profesi'));
+
+            global $user_id;            
+            $keahlian = $app->request->put('keahlian');
+            //$status = $app->request->put('status');
+
+            $db = new DbHandler();
+            $response = array();
+
+            // updating task
+            $result = $db->updateKeahlian($user_id, $keahlian);
+            if ($result) {
+                // task updated successfully
+                $response["error"] = false;
+                $response["message"] = "Keahlian updated successfully";
+            } else {
+                // task failed to update
+                $response["error"] = true;
+                $response["message"] = "Keahlian failed to update. Please try again!";
+            }
+            echoRespnse(200, $response);
+        });
+
+/**
+ * Updating existing task
+ * method PUT
+ * params task, status
+ * url - /tasks/:id
+ */
+$app->put('/updatePenghargaan', 'authenticate', function() use($app) {
+            // check for required params
+            //verifyRequiredParams(array('profesi'));
+
+            global $user_id;            
+            $penghargaan = $app->request->put('penghargaan');
+            //$status = $app->request->put('status');
+
+            $db = new DbHandler();
+            $response = array();
+
+            // updating task
+            $result = $db->updatePenghargaan($user_id, $penghargaan);
+            if ($result) {
+                // task updated successfully
+                $response["error"] = false;
+                $response["message"] = "Penghargaan updated successfully";
+            } else {
+                // task failed to update
+                $response["error"] = true;
+                $response["message"] = "Penghargaan failed to update. Please try again!";
+            }
+            echoRespnse(200, $response);
+        });
+
+
+/**
+ * Updating existing task
+ * method PUT
+ * params task, status
+ * url - /tasks/:id
+ */
+$app->put('/updateMinat', 'authenticate', function() use($app) {
+            // check for required params
+            //verifyRequiredParams(array('profesi'));
+
+            global $user_id;            
+            $minat_profesi = $app->request->put('minat_profesi');
+            //$status = $app->request->put('status');
+
+            $db = new DbHandler();
+            $response = array();
+
+            // updating task
+            $result = $db->updateMinat($user_id, $minat_profesi);
+            if ($result) {
+                // task updated successfully
+                $response["error"] = false;
+                $response["message"] = "Minat profesi updated successfully";
+            } else {
+                // task failed to update
+                $response["error"] = true;
+                $response["message"] = "Minat profesi failed to update. Please try again!";
+            }
+            echoRespnse(200, $response);
+        });
+
+
+
+/**
+ * Updating existing task
+ * method PUT
+ * params task, status
+ * url - /tasks/:id
+ */
+$app->put('/updateReferensi', 'authenticate', function() use($app) {
+            // check for required params
+            //verifyRequiredParams(array('profesi'));
+
+            global $user_id;            
+            $referensi_rekomendasi = $app->request->put('referensi_rekomendasi');
+            //$status = $app->request->put('status');
+
+            $db = new DbHandler();
+            $response = array();
+
+            // updating task
+            $result = $db->updateReferensi($user_id, $referensi_rekomendasi);
+            if ($result) {
+                // task updated successfully
+                $response["error"] = false;
+                $response["message"] = "Referensi rekomendasi updated successfully";
+            } else {
+                // task failed to update
+                $response["error"] = true;
+                $response["message"] = "Referensi rekomendasi failed to update. Please try again!";
+            }
+            echoRespnse(200, $response);
+        });
+
+
+/**
+ * Updating existing task
+ * method PUT
+ * params task, status
+ * url - /tasks/:id
+ */
+$app->put('/updateTelp', 'authenticate', function() use($app) {
+            // check for required params
+            //verifyRequiredParams(array('profesi'));
+
+            global $user_id;            
+            $telp = $app->request->put('telp');
+            //$status = $app->request->put('status');
+
+            $db = new DbHandler();
+            $response = array();
+
+            // updating task
+            $result = $db->updateTelp($user_id, $telp);
+            if ($result) {
+                // task updated successfully
+                $response["error"] = false;
+                $response["message"] = "Telp updated successfully";
+            } else {
+                // task failed to update
+                $response["error"] = true;
+                $response["message"] = "Telp failed to update. Please try again!";
+            }
+            echoRespnse(200, $response);
+        });
+
+
+/**
+ * Updating existing task
+ * method PUT
+ * params task, status
+ * url - /tasks/:id
+ */
+$app->put('/updateEmail', 'authenticate', function() use($app) {
+            // check for required params
+            //verifyRequiredParams(array('profesi'));
+
+            global $id;            
+            $email = $app->request->put('email');
+            //$status = $app->request->put('status');
+
+            $db = new DbHandler();
+            $response = array();
+
+            // updating task
+            $result = $db->updateEmail($id, $email);
+            if ($result) {
+                // task updated successfully
+                $response["error"] = false;
+                $response["message"] = "Email updated successfully";
+            } else {
+                // task failed to update
+                $response["error"] = true;
+                $response["message"] = "Email failed to update. Please try again!";
+            }
+            echoRespnse(200, $response);
+        });
 
 /**
  * Updating existing task
